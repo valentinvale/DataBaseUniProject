@@ -1,0 +1,42 @@
+--1) Sa se afiseze secolul in care a fost publicata fiecare carte si numele cartilor. Afisarea va fi facuta in ordinea crescatoare a anului de lansare.
+-- WITH, CASE, SUBSTR, TO_CHAR
+
+WITH secol as (select c.nume_carte, c.an_publicare FROM carti c)
+SELECT s.nume_carte, s.an_publicare,
+CASE 
+WHEN SUBSTR(TO_CHAR(s.an_publicare),1,2) = '19' THEN 'Secolul 20'
+WHEN SUBSTR(TO_CHAR(s.an_publicare),1,2) = '18' THEN 'Secolul 19'
+END AS Secol_Publicare
+FROM secol s
+ORDER BY s.an_publicare;
+
+--2) Sa se afiseze facultatile care au bibliotecile care au numarul de bibliotecari egal cu numarul de studenti de la facultate   
+-- 4 tabele, GROUP BY, HAVING
+
+SELECT UNIQUE fac.nume_facultate, COUNT(bibliotecar.id_bibliotecar), COUNT(stud.id_student)
+FROM facultati fac
+JOIN biblioteci b ON b.id_biblioteca = fac.id_facultate
+JOIN bibliotecari bibliotecar ON bibliotecar.id_biblioteca = b.id_biblioteca
+JOIN studenti stud ON stud.id_facultate = fac.id_facultate
+GROUP BY (fac.nume_facultate, bibliotecar.id_bibliotecar, stud.id_student)
+HAVING COUNT(bibliotecar.id_bibliotecar) = COUNT(stud.id_student);
+
+--3) Sa se afiseze id-ul si numele fiecarui istoric sau data curenta daca istoricul nu are nume si data curenta este diferita de 01.01.1990
+-- Functii data, NVL
+SELECT ist.id_istoric, NVL(ist.nume_istoric, TO_CHAR(SYSDATE, 'DD-MM-YYYY'))
+FROM istoricuri ist
+WHERE TO_DATE(SYSDATE, 'DD-MM-YYYY') <> TO_DATE('01-01-1990', 'DD-MM-YYYY');
+
+--4) Pentru cartile de gen 'Poezie' sa se afiseze 'da' daca cartea s-a lansat intr-un an cu o paritate egala cu paritatea diferentei dintre varsta maxima a bibliotecarilor si cea minima a studentilor si 'nu' daca nu e egala.
+-- subcerere nesincronizata, decode, filtrare la nivel de linii
+
+SELECT c.nume_carte, c.gen, c.an_publicare, DECODE(MOD((SELECT MAX(vmax.varsta) FROM bibliotecari vmax) - (SELECT MIN(vmin.varsta) FROM studenti vmin), 2), MOD(c.an_publicare, 2), 'da', 'nu')
+FROM carti c
+WHERE c.gen = 'Poezie';
+
+--5) Afisati numarul de carti scrise de fiecare autor
+-- subcerere sincronizata, COUNT
+
+SELECT a.nume_si_prenume_autor,
+(SELECT COUNT(c.isbn) FROM carti c where a.id_autor = c.id_autor)
+FROM autori a;

@@ -1,0 +1,19 @@
+--Afisez cartile scrise de Albert Camus sau Sylvia Plath
+
+CREATE VIEW viz as(
+SELECT c.nume_carte, c.gen, c.isbn, a.nume_si_prenume_autor
+FROM carti c
+JOIN autori a ON a.id_autor = c.id_autor
+WHERE a.nume_si_prenume_autor = 'Albert Camus' or a.nume_si_prenume_autor = 'Sylvia Plath'
+);
+
+SELECT * FROM viz;
+
+--Merge:
+UPDATE viz SET gen = 'Liric' WHERE gen = 'Poezie';
+--Nu Merge:
+UPDATE viz SET gen = 'Proza', nume_si_prenume_autor = UPPER(nume_si_prenume_autor) WHERE MOD(isbn, 2) = 0;
+
+SELECT * FROM viz;
+
+DROP VIEW viz;

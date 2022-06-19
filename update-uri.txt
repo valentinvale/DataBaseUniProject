@@ -1,0 +1,12 @@
+--update-uri
+
+UPDATE autori SET nume_si_prenume_autor = UPPER(nume_si_prenume_autor) WHERE LENGTH(nume_si_prenume_autor) > 15;
+DELETE FROM istoricuri WHERE nume_istoric IS NULL;
+UPDATE abonamente SET tip_abonament = 'gold' WHERE tip_abonament = 'aur';
+
+SELECT * FROM autori;
+SELECT * FROM istoricuri;
+SELECT * FROM abonamente;
+
+COMMIT;
+ROLLBACK;

@@ -1,0 +1,131 @@
+
+CREATE TABLE facultati(
+id_facultate number(10) PRIMARY KEY,
+nume_facultate varchar2(30) NOT NULL,
+durata number(2) NOT NULL
+);
+
+CREATE TABLE studenti(
+id_student number(10) PRIMARY KEY,
+id_facultate number(10) NOT NULL,
+FOREIGN KEY (id_facultate) REFERENCES facultati(id_facultate),
+nume_si_prenume_student varchar2(25) NOT NULL,
+varsta number(3) NOT NULL
+);
+
+
+CREATE TABLE autori(
+id_autor number(10) PRIMARY KEY,
+nume_si_prenume_autor varchar2(30) NOT NULL
+);
+
+
+CREATE TABLE edituri(
+id_editura number(10) PRIMARY KEY,
+nume_editura varchar2(30) NOT NULL,
+tara varchar2(20) NOT NULL
+);
+
+CREATE TABLE colectii(
+id_colectie number(10) PRIMARY KEY,
+nume_colectie varchar2(30) NOT NULL
+);
+
+CREATE TABLE carti(
+isbn number(13) PRIMARY KEY,
+id_autor number(10) NOT NULL,
+id_editura number(10) NOT NULL,
+id_colectie number(10) NOT NULL,
+FOREIGN KEY (id_autor) REFERENCES autori(id_autor),
+FOREIGN KEY (id_editura) REFERENCES edituri(id_editura),
+FOREIGN KEY (id_colectie) REFERENCES colectii(id_colectie),
+nume_carte varchar2(100) NOT NULL,
+gen varchar2(50) NOT NULL,
+an_publicare number(4)
+);
+
+
+CREATE TABLE biblioteci(
+id_biblioteca number(10) PRIMARY KEY,
+id_facultate number(10) NOT NULL,
+FOREIGN KEY (id_facultate) REFERENCES facultati(id_facultate),
+nume_biblioteca varchar2(25)
+);
+
+
+CREATE TABLE conturi(
+id_cont number(10) PRIMARY KEY,
+username varchar2(25) NOT NULL
+);
+
+
+CREATE TABLE contracte_imprumut(
+id_contract number(10) PRIMARY KEY,
+taxa_intarziere number(3) NOT NULL,
+durata number(3) NOT NULL
+);
+
+
+CREATE TABLE bibliotecari(
+id_bibliotecar number(10) PRIMARY KEY,
+id_biblioteca number(10) NOT NULL,
+FOREIGN KEY (id_biblioteca) REFERENCES biblioteci(id_biblioteca),
+nume_si_prenume_bibliotecar varchar2(30) NOT NULL,
+varsta number(3) NOT NULL
+);
+
+
+CREATE TABLE istoricuri(
+id_istoric number(10) PRIMARY KEY,
+nume_istoric varchar2(30)
+);
+
+
+CREATE TABLE abonamente(
+id_abonament number(10) PRIMARY KEY,
+tip_abonament varchar2(30) NOT NULL
+);
+
+CREATE TABLE creeaza(
+id_cont number(10) NOT NULL,
+id_student number(10) NOT NULL,
+id_abonament number(10) NOT NULL,
+CONSTRAINT pk_creeaza PRIMARY KEY (id_cont, id_student, id_abonament),
+FOREIGN KEY (id_cont) REFERENCES conturi(id_cont),
+FOREIGN KEY (id_student) REFERENCES studenti(id_student),
+FOREIGN KEY (id_abonament) REFERENCES abonamente(id_abonament)
+);
+
+CREATE TABLE imprumuta_tern(
+isbn number(13) NOT NULL,
+id_contract number(10) NOT NULL,
+id_bibliotecar number(10) NOT NULL,
+CONSTRAINT pk_imprumuta_tern PRIMARY KEY (isbn, id_contract, id_bibliotecar),
+FOREIGN KEY (isbn) REFERENCES carti(isbn),
+FOREIGN KEY(id_contract) REFERENCES contracte_imprumut(id_contract),
+FOREIGN KEY(id_bibliotecar) REFERENCES bibliotecari(id_bibliotecar)
+);
+
+CREATE TABLE se_inscrie(
+id_student number(10) NOT NULL,
+id_facultate number(10) NOT NULL,
+FOREIGN KEY (id_student) REFERENCES studenti(id_student),
+FOREIGN KEY(id_facultate) REFERENCES facultati(id_facultate),
+CONSTRAINT pk_se_inscrie PRIMARY KEY (id_student, id_facultate)
+);
+
+CREATE TABLE imprumuta(
+id_student number(10) NOT NULL,
+isbn number(13) NOT NULL,
+FOREIGN KEY (id_student) REFERENCES studenti(id_student),
+FOREIGN KEY(isbn) REFERENCES carti(isbn),
+CONSTRAINT pk_imprumuta PRIMARY KEY (id_student, isbn)
+);
+
+CREATE TABLE poate_fi_gasita(
+id_biblioteca number(10) NOT NULL,
+isbn number(13) NOT NULL,
+FOREIGN KEY (id_biblioteca) REFERENCES biblioteci(id_biblioteca),
+FOREIGN KEY(isbn) REFERENCES carti(isbn),
+CONSTRAINT pk_poate_fi_gasita PRIMARY KEY (id_biblioteca, isbn)
+);

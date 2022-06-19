@@ -1,0 +1,17 @@
+--Secventa utilizata pentru inserare in tabele (autoincrementare)
+
+CREATE SEQUENCE AUTO_ID
+START WITH 1
+INCREMENT BY 1
+MINVALUE 1
+MAXVALUE 1000
+NOCYCLE;
+
+INSERT INTO bibliotecari VALUES (AUTO_ID.nextval, 1, 'Andrei Gheorghe', 40);
+INSERT INTO bibliotecari VALUES (AUTO_ID.nextval, 2, 'Hagi Dobrin', 27);
+INSERT INTO bibliotecari VALUES (AUTO_ID.nextval, 3, 'Tiberiu Iordache', 30);
+INSERT INTO bibliotecari VALUES (AUTO_ID.nextval, 4, 'Andrei Ivan', 31);
+INSERT INTO bibliotecari VALUES (AUTO_ID.nextval, 5, 'Vlad Marian', 38);
+
+
+DROP SEQUENCE AUTO_ID;
